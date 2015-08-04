@@ -5,11 +5,5 @@ test.center()
 test.pinch.enabled = true
 
 test.on Events.Pinch, ->
-	test.scale = Utils.modulate(test.pinch.distance, [0, 400], [.5, 2], true)
-	
-test.on Events.PinchEnd, ->
-	
-	test.animate
-		properties:
-			rotation: 0
-			scale: 1	
+	# Need to figure out this piece so scaling, in this example, is fluid (no noticeable jumps, jitteriness)
+	test.scale = Utils.modulate(test.pinch.distance + test.pinch.previousDistance, [-150, 800+test.pinch.previousDistance], [.5, 2], true)
