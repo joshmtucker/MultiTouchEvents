@@ -51,9 +51,6 @@ LayerPinch = (function(superClass) {
   function LayerPinch(layer1) {
     this.layer = layer1;
     this._endValues = bind(this._endValues, this);
-    this._calculateMidPoint = bind(this._calculateMidPoint, this);
-    this._calculateAngle = bind(this._calculateAngle, this);
-    this._calculateDistance = bind(this._calculateDistance, this);
     this._pinchEnd = bind(this._pinchEnd, this);
     this._pinch = bind(this._pinch, this);
     this._pinchStart = bind(this._pinchStart, this);
@@ -95,7 +92,7 @@ LayerPinch = (function(superClass) {
   LayerPinch.prototype._pinchEnd = function(event) {
     if (event.targetTouches.length <= 0 && this._isPinching) {
       document.removeEventListener(Events.TouchMove, this._pinch);
-      this._endValues(event, this);
+      this._endValues(this);
       this.layer.emit(Events.PinchEnd, event);
       return this._isPinching = false;
     }
@@ -128,7 +125,9 @@ LayerPinch = (function(superClass) {
   };
 
   LayerPinch.prototype._calculateMidPoint = function(event, layer) {
-    var i, len, midPoint, ref, touch;
+    var i, len, midPoint, ref, touch, x, y;
+    x = 0;
+    y = 0;
     ref = event.targetTouches;
     for (i = 0, len = ref.length; i < len; i++) {
       touch = ref[i];
@@ -140,15 +139,15 @@ LayerPinch = (function(superClass) {
       y: y / event.targetTouches.length
     };
     _midPoints.push(midPoint);
-    layer._midPoint = _midPoints.slice(-1, 2)[0];
-    return layer_.midPointDistance = _midPoints.slice(-1)[0] - _midPoints.slice(0, 1)[0];
+    layer._midPoint = _midPoints.slice(-1)[0];
+    return layer._midPointDistance = _midPoints.slice(-1)[0] - _midPoints.slice(0, 1)[0];
   };
 
-  LayerPinch.prototype._endValues = function(event, layer) {
-    layer._previousDistance = layer_.distance = _distances.slice(-1)[0];
-    layer._previousAngle = layer_.angle = _angles.slice(-1)[0];
+  LayerPinch.prototype._endValues = function(layer) {
+    layer._previousDistance = layer._distance = _distances.slice(-1)[0];
+    layer._previousAngle = layer._angle = _angles.slice(-1)[0];
     layer._previousMidPoint = layer._midPoint = _midPoints.slice(-1)[0];
-    layer.previousMidPointDistance = _midPoints.slice(-1)[0] - _midPoints.slice(0, 1)[0];
+    layer._previousMidPointDistance = _midPoints.slice(-1)[0] - _midPoints.slice(0, 1)[0];
     _fingers = [];
     _distances = [];
     _angles = [];

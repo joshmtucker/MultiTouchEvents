@@ -66,13 +66,13 @@ class LayerPinch extends Framer.BaseClass
 
 			document.removeEventListener(Events.TouchMove, @_pinch)
 
-			@_endValues(event, @)
+			@_endValues(@)
 
 			@layer.emit(Events.PinchEnd, event)
 
 			@_isPinching = false
 
-	_calculateDistance: (event, layer) =>
+	_calculateDistance: (event, layer) ->
 		length = event.targetTouches.length - 1
 		touches = event.targetTouches
 
@@ -84,7 +84,7 @@ class LayerPinch extends Framer.BaseClass
 		_distances.push(distance)
 		layer._distance = _distances[-1..-1][0] - _distances[0..0][0]
 
-	_calculateAngle: (event, layer) =>
+	_calculateAngle: (event, layer) ->
 		length = event.targetTouches.length - 1
 		touches = event.targetTouches
 
@@ -96,7 +96,10 @@ class LayerPinch extends Framer.BaseClass
 		_angles.push(angle)
 		layer._angle = _angles[-1..-1][0] - _angles[0..0][0]
 
-	_calculateMidPoint: (event, layer) =>
+	_calculateMidPoint: (event, layer) ->
+		x = 0
+		y = 0
+		
 		for touch in event.targetTouches
 			x += touch.pageX
 			y += touch.pageY
@@ -106,16 +109,15 @@ class LayerPinch extends Framer.BaseClass
 			y: y/event.targetTouches.length
 
 		_midPoints.push(midPoint)
-		layer._midPoint = _midPoints[-1..1][0]
-		layer_.midPointDistance = _midPoints[-1..-1][0] - _midPoints[0..0][0]
+		layer._midPoint = _midPoints[-1..-1][0]
+		layer._midPointDistance = _midPoints[-1..-1][0] - _midPoints[0..0][0]
 
 
-
-	_endValues: (event, layer) =>
-		layer._previousDistance = layer_.distance = _distances[-1..-1][0]
-		layer._previousAngle = layer_.angle = _angles[-1..-1][0]
+	_endValues: (layer) =>
+		layer._previousDistance = layer._distance = _distances[-1..-1][0]
+		layer._previousAngle = layer._angle = _angles[-1..-1][0]
 		layer._previousMidPoint = layer._midPoint = _midPoints[-1..-1][0]
-		layer.previousMidPointDistance = _midPoints[-1..-1][0] - _midPoints[0..0][0]
+		layer._previousMidPointDistance = _midPoints[-1..-1][0] - _midPoints[0..0][0]
 
 		# TODO: Is it necessary to clear these? Would there be a reason to keep their values?
 		# Wouldn't require storing previous values for modulate, but may run into other problems
