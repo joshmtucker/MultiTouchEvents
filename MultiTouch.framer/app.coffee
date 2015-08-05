@@ -6,4 +6,6 @@ test.pinch.enabled = true
 
 test.on Events.Pinch, ->
 	# Need to figure out this piece so scaling, in this example, is fluid (no noticeable jumps, jitteriness)
-	test.scale = Utils.modulate(test.pinch.distance + test.pinch.previousDistance, [-150, 800+test.pinch.previousDistance], [.5, 2], true)
+	print test.pinch.direction
+	
+	test.scale = Utils.modulate(test.pinch.distance + test.pinch.previousDistance, [0 - (Screen.height * .125), Screen.height+test.pinch.previousDistance], [.5, 2], true)

@@ -53,6 +53,9 @@ class LayerPinch extends Framer.BaseClass
 			# Distance
 			@_calculateDistance(event, @)
 
+			# Direction
+			@_calculateDirection(@)
+
 			# Angle
 			@_calculateAngle(event, @)
 
@@ -84,6 +87,12 @@ class LayerPinch extends Framer.BaseClass
 		_distances.push(distance)
 		layer._distance = _distances[-1..-1][0] - _distances[0..0][0]
 
+	_calculateDirection: (layer) ->
+		_direction = _distances[-1..-1][0] - _distances[-2..-2][0]
+
+		layer._direction = if _direction > 0 then "outward" else "inward"
+
+
 	_calculateAngle: (event, layer) ->
 		length = event.targetTouches.length - 1
 		touches = event.targetTouches
@@ -114,8 +123,8 @@ class LayerPinch extends Framer.BaseClass
 
 
 	_endValues: (layer) =>
-		layer._previousDistance = layer._distance = _distances[-1..-1][0]
-		layer._previousAngle = layer._angle = _angles[-1..-1][0]
+		layer._previousDistance = layer._distance = _distances[-1..-1][0] - _distances[0..0][0]
+		layer._previousAngle = layer._angle = _angles[-1..-1][0] - _angles[0..0][0]
 		layer._previousMidPoint = layer._midPoint = _midPoints[-1..-1][0]
 		layer._previousMidPointDistance = _midPoints[-1..-1][0] - _midPoints[0..0][0]
 
@@ -131,6 +140,8 @@ class LayerPinch extends Framer.BaseClass
 
 	@define "distance", get: -> @_distance or 0
 	@define "previousDistance", get: -> @_previousDistance or 0
+
+	@define "direction", get: -> @_direction or 0
 
 
 	@define "angle", get: -> @_angle or 0

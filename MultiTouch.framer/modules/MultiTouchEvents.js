@@ -83,6 +83,7 @@ LayerPinch = (function(superClass) {
     this._fingers = event.targetTouches.length;
     if (this._fingers >= 2) {
       this._calculateDistance(event, this);
+      this._calculateDirection(this);
       this._calculateAngle(event, this);
       this._calculateMidPoint(event, this);
       return this.layer.emit(Events.Pinch, event);
@@ -109,6 +110,12 @@ LayerPinch = (function(superClass) {
     distance = Math.sqrt(points.x + points.y);
     _distances.push(distance);
     return layer._distance = _distances.slice(-1)[0] - _distances.slice(0, 1)[0];
+  };
+
+  LayerPinch.prototype._calculateDirection = function(layer) {
+    var _direction;
+    _direction = _distances.slice(-1)[0] - _distances.slice(-2, -1)[0];
+    return layer._direction = _direction > 0 ? "outward" : "inward";
   };
 
   LayerPinch.prototype._calculateAngle = function(event, layer) {
@@ -144,8 +151,8 @@ LayerPinch = (function(superClass) {
   };
 
   LayerPinch.prototype._endValues = function(layer) {
-    layer._previousDistance = layer._distance = _distances.slice(-1)[0];
-    layer._previousAngle = layer._angle = _angles.slice(-1)[0];
+    layer._previousDistance = layer._distance = _distances.slice(-1)[0] - _distances.slice(0, 1)[0];
+    layer._previousAngle = layer._angle = _angles.slice(-1)[0] - _angles.slice(0, 1)[0];
     layer._previousMidPoint = layer._midPoint = _midPoints.slice(-1)[0];
     layer._previousMidPointDistance = _midPoints.slice(-1)[0] - _midPoints.slice(0, 1)[0];
     _fingers = [];
@@ -169,6 +176,12 @@ LayerPinch = (function(superClass) {
   LayerPinch.define("previousDistance", {
     get: function() {
       return this._previousDistance || 0;
+    }
+  });
+
+  LayerPinch.define("direction", {
+    get: function() {
+      return this._direction || 0;
     }
   });
 
