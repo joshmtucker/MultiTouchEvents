@@ -55,31 +55,33 @@ class LayerPinch extends Framer.BaseClass
 		if @_fingers >= 2
 
 			# Distance
-			@_calculateDistance(event, @)
+			@_calculateDistance(event)
 
 			# Direction
-			@_calculateDirection(@)
+			@_calculateDirection(event)
 
 			# Angle
-			@_calculateAngle(event, @)
+			@_calculateAngle(event)
 
 			# Midpoint
-			@_calculateMidPoint(event, @)
+			@_calculateMidPoint(event)
 
 			@layer.emit(Events.Pinch, event)
 
 	_pinchEnd: (event) =>
 		if event.targetTouches.length <= 0 and @_isPinching
 
+			event.stopPropagation() unless @propagateEvents
+
 			document.removeEventListener(Events.TouchMove, @_pinch)
 
-			@_endValues(@)
+			@_endValues()
 
 			@layer.emit(Events.PinchEnd, event)
 
 			@_isPinching = false
 
-	_calculateDistance: (event, layer) ->
+	_calculateDistance: (event) ->
 		length = event.targetTouches.length - 1
 		touches = event.targetTouches
 
@@ -89,15 +91,15 @@ class LayerPinch extends Framer.BaseClass
 
 		distance = Math.sqrt(points.x + points.y)
 		_distances.push(distance)
-		layer._distance = _distances[-1..-1][0] - _distances[0..0][0]
+		@_distance = _distances[-1..-1][0] - _distances[0..0][0]
 
-	_calculateDirection: (layer) ->
+	_calculateDirection: ->
 		_direction = _distances[-1..-1][0] - _distances[-2..-2][0]
 
-		layer._direction = if _direction > 0 then "outward" else "inward"
+		@_direction = if _direction > 0 then "outward" else "inward"
 
 
-	_calculateAngle: (event, layer) ->
+	_calculateAngle: (event) ->
 		length = event.targetTouches.length - 1
 		touches = event.targetTouches
 
@@ -107,9 +109,9 @@ class LayerPinch extends Framer.BaseClass
 
 		angle = Math.atan(line.rise/line.run) * (180/Math.PI)
 		_angles.push(angle)
-		layer._angle = _angles[-1..-1][0] - _angles[0..0][0]
+		@_angle = _angles[-1..-1][0] - _angles[0..0][0]
 
-	_calculateMidPoint: (event, layer) ->
+	_calculateMidPoint: (event) ->
 		x = 0
 		y = 0
 		
@@ -122,15 +124,15 @@ class LayerPinch extends Framer.BaseClass
 			y: y/event.targetTouches.length
 
 		_midPoints.push(midPoint)
-		layer._midPoint = _midPoints[-1..-1][0]
-		layer._midPointDistance = _midPoints[-1..-1][0] - _midPoints[0..0][0]
+		@_midPoint = _midPoints[-1..-1][0]
+		@_midPointDistance = _midPoints[-1..-1][0] - _midPoints[0..0][0]
 
 
-	_endValues: (layer) =>
-		layer._previousDistance = layer._distance = _distances[-1..-1][0] - _distances[0..0][0]
-		layer._previousAngle = layer._angle = _angles[-1..-1][0] - _angles[0..0][0]
-		layer._previousMidPoint = layer._midPoint = _midPoints[-1..-1][0]
-		layer._previousMidPointDistance = _midPoints[-1..-1][0] - _midPoints[0..0][0]
+	_endValues:  ->
+		@_previousDistance = @_distance = _distances[-1..-1][0] - _distances[0..0][0]
+		@_previousAngle = @_angle = _angles[-1..-1][0] - _angles[0..0][0]
+		@_previousMidPoint = @_midPoint = _midPoints[-1..-1][0]
+		@_previousMidPointDistance = _midPoints[-1..-1][0] - _midPoints[0..0][0]
 
 		# TODO: Is it necessary to clear these? Would there be a reason to keep their values?
 		# Wouldn't require storing previous values for modulate, but may run into other problems
