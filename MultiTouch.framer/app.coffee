@@ -5,7 +5,9 @@ test.center()
 test.pinch.enabled = true
 
 test.on Events.Pinch, ->
-	# Need to figure out this piece so scaling, in this example, is fluid (no noticeable jumps, jitteriness)
-	print test.pinch.direction
+	# cap the values when they get outside of the range we'll use for scaling
+	test.pinch.totalDistance = 100 if test.pinch.totalDistance > 100
+	test.pinch.totalDistance = 0 if test.pinch.totalDistance < 0
+	# scale by using the total pinched distance so far + new distance
 	
-	test.scale = Utils.modulate(test.pinch.distance + test.pinch.previousDistance, [0 - (Screen.height * .125), Screen.height+test.pinch.previousDistance], [.5, 2], true)
+	test.scale = Utils.modulate(test.pinch.totalDistance+test.pinch.distance, [0,100],[1,2],true)
