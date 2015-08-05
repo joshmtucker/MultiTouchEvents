@@ -63,11 +63,17 @@ LayerPinch = (function(superClass) {
     return this.layer.on(Events.TouchStart, this._pinchStart);
   };
 
+  LayerPinch.prototype.remove = function() {
+    return this.layer.off(Events.TouchStart, this._pinchStart);
+  };
+
   LayerPinch.prototype._pinchStart = function(event) {
-    this._fingers = event.targetTouches.length;
-    if (this._fingers >= 2 && Utils.isMobile()) {
-      document.addEventListener(Events.TouchMove, this._pinch);
-      return document.addEventListener(Events.TouchEnd, this._pinchEnd);
+    if (Utils.isMobile()) {
+      this._fingers = event.targetTouches.length;
+      if (this._fingers >= 2) {
+        document.addEventListener(Events.TouchMove, this._pinch);
+        return document.addEventListener(Events.TouchEnd, this._pinchEnd);
+      }
     }
   };
 

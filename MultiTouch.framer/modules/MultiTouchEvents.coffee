@@ -31,12 +31,16 @@ class LayerPinch extends Framer.BaseClass
 	attach: ->
 		@layer.on Events.TouchStart, @_pinchStart
 
-	_pinchStart: (event) =>
-		@_fingers = event.targetTouches.length
+	remove: ->
+		@layer.off Events.TouchStart, @_pinchStart
 
-		if @_fingers >= 2 and Utils.isMobile()
-			document.addEventListener(Events.TouchMove, @_pinch)
-			document.addEventListener(Events.TouchEnd, @_pinchEnd)
+	_pinchStart: (event) =>
+		if Utils.isMobile()
+			@_fingers = event.targetTouches.length
+
+			if @_fingers >= 2
+				document.addEventListener(Events.TouchMove, @_pinch)
+				document.addEventListener(Events.TouchEnd, @_pinchEnd)
 
 	_pinch: (event) =>
 		return unless @enabled
