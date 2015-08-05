@@ -90,6 +90,7 @@ class LayerPinch extends Framer.BaseClass
 		distance = Math.sqrt(points.x + points.y)
 		_distances.push(distance)
 		layer._distance = _distances[-1..-1][0] - _distances[0..0][0]
+		layer._totalDistance = @previousTotalDistance+@distance
 
 	_calculateDirection: (layer) ->
 		_direction = _distances[-1..-1][0] - _distances[-2..-2][0]
@@ -120,8 +121,8 @@ class LayerPinch extends Framer.BaseClass
 		midPoint = 
 			x: x/event.targetTouches.length
 			y: y/event.targetTouches.length
-
 		_midPoints.push(midPoint)
+
 		layer._midPoint = _midPoints[-1..-1][0]
 		layer._midPointDistance = _midPoints[-1..-1][0] - _midPoints[0..0][0]
 
@@ -131,6 +132,7 @@ class LayerPinch extends Framer.BaseClass
 		layer._previousAngle = layer._angle = _angles[-1..-1][0] - _angles[0..0][0]
 		layer._previousMidPoint = layer._midPoint = _midPoints[-1..-1][0]
 		layer._previousMidPointDistance = _midPoints[-1..-1][0] - _midPoints[0..0][0]
+		layer._previousTotalDistance = @totalDistance
 
 		# TODO: Is it necessary to clear these? Would there be a reason to keep their values?
 		# Wouldn't require storing previous values for modulate, but may run into other problems
@@ -144,6 +146,12 @@ class LayerPinch extends Framer.BaseClass
 
 	@define "distance", get: -> @_distance or 0
 	@define "previousDistance", get: -> @_previousDistance or 0
+	@define "previousTotalDistance", 
+		get: -> @_previousTotalDistance or 0
+		set: (value) -> @_previousTotalDistance = value
+	@define "totalDistance", 
+		get: -> @_totalDistance or 0
+		set: (value) -> @_totalDistance = value
 
 	@define "direction", get: -> @_direction or 0
 
