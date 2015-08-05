@@ -163,6 +163,7 @@ LayerPinch = (function(superClass) {
     this._previousAngle = this._angle = _angles.slice(-1)[0] - _angles.slice(0, 1)[0];
     this._previousMidPoint = this._midPoint = _midPoints.slice(-1)[0];
     this._previousMidPointDistance = _midPoints.slice(-1)[0] - _midPoints.slice(0, 1)[0];
+    this._totalDistance = this.totalDistance + this.distance;
     _fingers = [];
     _distances = [];
     _angles = [];
@@ -181,9 +182,12 @@ LayerPinch = (function(superClass) {
     }
   });
 
-  LayerPinch.define("previousDistance", {
+  LayerPinch.define("totalDistance", {
     get: function() {
-      return this._previousDistance || 0;
+      return this._totalDistance || 0;
+    },
+    set: function(value) {
+      return this._totalDistance = value;
     }
   });
 

@@ -133,6 +133,7 @@ class LayerPinch extends Framer.BaseClass
 		@_previousAngle = @_angle = _angles[-1..-1][0] - _angles[0..0][0]
 		@_previousMidPoint = @_midPoint = _midPoints[-1..-1][0]
 		@_previousMidPointDistance = _midPoints[-1..-1][0] - _midPoints[0..0][0]
+		@_totalDistance = @totalDistance + @distance
 
 		# TODO: Is it necessary to clear these? Would there be a reason to keep their values?
 		# Wouldn't require storing previous values for modulate, but may run into other problems
@@ -145,7 +146,9 @@ class LayerPinch extends Framer.BaseClass
 	@define "fingers", get: -> @_fingers or 0
 
 	@define "distance", get: -> @_distance or 0
-	@define "previousDistance", get: -> @_previousDistance or 0
+	@define "totalDistance", 
+		get: -> @_totalDistance or 0
+		set: (value) -> @_totalDistance = value
 
 	@define "direction", get: -> @_direction or 0
 
